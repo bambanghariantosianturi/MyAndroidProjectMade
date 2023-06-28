@@ -45,7 +45,6 @@ class DataRepository @Inject constructor(
 
             override fun shouldFetch(data: List<MovieItemModel>?): Boolean {
                 return true
-//                data.isNullOrEmpty()
             }
 
             override fun createCall(): Flowable<ApiResponse<List<MovieItemResponse>>> {
