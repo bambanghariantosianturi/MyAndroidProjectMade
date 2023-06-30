@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.ViewModel
 import com.example.myandroidproject.core.data.Resource
-import com.example.myandroidproject.core.data.source.local.entity.DataEntity
 import com.example.myandroidproject.core.domain.model.detailmoviemodel.DetailMovie
 import com.example.myandroidproject.core.domain.model.listmoviesmodel.MovieItemModel
 import com.example.myandroidproject.core.domain.model.movietrailermodel.MovieTrailerItemModel
@@ -13,7 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DetailViewModel @Inject constructor(private val dataUseCase: DataUseCase): ViewModel(),
+class DetailViewModel @Inject constructor(private val dataUseCase: DataUseCase) : ViewModel(),
     IDetailViewModel {
 
     override fun getDetailMovieData(movieId: Int): LiveData<Resource<DetailMovie>> {

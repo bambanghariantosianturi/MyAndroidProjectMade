@@ -33,9 +33,6 @@ class DataRepository @Inject constructor(
         genreId: Int
     ): Flowable<Resource<List<MovieItemModel>>> {
         return object : NetworkBoundResource<List<MovieItemModel>, List<MovieItemResponse>>() {
-            override fun onFetchFailed() {
-                super.onFetchFailed()
-            }
 
             override fun loadFromDB(): Flowable<List<MovieItemModel>> {
                 return localDataSource.getAllData().map {
@@ -44,7 +41,7 @@ class DataRepository @Inject constructor(
             }
 
             override fun shouldFetch(data: List<MovieItemModel>?): Boolean {
-                return true
+                return data.isNullOrEmpty()
             }
 
             override fun createCall(): Flowable<ApiResponse<List<MovieItemResponse>>> {
@@ -67,34 +64,34 @@ class DataRepository @Inject constructor(
         result.onNext(Resource.Loading(null))
         val response = remoteDataSource.getDetailMovie(movieId).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).take(1).doOnComplete {
-            mCompositeDisposable.dispose()
-        }.subscribe { response ->
-            when (response) {
-                is ApiResponse.Success -> {
-                    result.onNext(
-                        Resource.Success(
-                            DataMapper.DetailMovieMapper.mapResponseToDomain(
-                                response.data
+                mCompositeDisposable.dispose()
+            }.subscribe { response ->
+                when (response) {
+                    is ApiResponse.Success -> {
+                        result.onNext(
+                            Resource.Success(
+                                DataMapper.DetailMovieMapper.mapResponseToDomain(
+                                    response.data
+                                )
                             )
                         )
-                    )
-                }
+                    }
 
-                is ApiResponse.Empty -> {
-                    result.onNext(
-                        Resource.Success(
-                            DataMapper.DetailMovieMapper.mapResponseToDomain(
-                                input = null
+                    is ApiResponse.Empty -> {
+                        result.onNext(
+                            Resource.Success(
+                                DataMapper.DetailMovieMapper.mapResponseToDomain(
+                                    input = null
+                                )
                             )
                         )
-                    )
-                }
+                    }
 
-                is ApiResponse.Error -> {
-                    result.onNext(Resource.Error(response.errorMessage, null))
+                    is ApiResponse.Error -> {
+                        result.onNext(Resource.Error(response.errorMessage, null))
+                    }
                 }
             }
-        }
         mCompositeDisposable.add(response)
 
         return result.toFlowable(BackpressureStrategy.BUFFER)

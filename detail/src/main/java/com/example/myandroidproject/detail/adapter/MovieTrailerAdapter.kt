@@ -37,7 +37,6 @@ class MovieTrailerAdapter : RecyclerView.Adapter<MovieTrailerAdapter.ListViewHol
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val data = listData[position]
-        holder.bind(data)
     }
 
     override fun getItemCount(): Int {
@@ -46,9 +45,6 @@ class MovieTrailerAdapter : RecyclerView.Adapter<MovieTrailerAdapter.ListViewHol
 
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemListMovieBinding.bind(itemView)
-        fun bind(data: MovieTrailerItemModel) {
-
-        }
 
         init {
             binding.root.setOnClickListener {

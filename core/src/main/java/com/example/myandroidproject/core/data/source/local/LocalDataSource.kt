@@ -20,7 +20,7 @@ class LocalDataSource @Inject constructor(private val userDao: UserDao) {
     }
 
     fun insertDataMovie(dataEntity: List<DataEntity>): Completable {
-        return userDao.insertData(dataEntity)
+        return userDao.insertData(dataEntity.map { it })
     }
 
     fun setFavoriteMovie(dataEntity: DataEntity, newState: Boolean) {

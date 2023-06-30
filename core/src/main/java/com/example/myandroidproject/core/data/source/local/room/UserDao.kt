@@ -1,6 +1,5 @@
 package com.example.myandroidproject.core.data.source.local.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -17,7 +16,7 @@ interface UserDao {
     fun getAllData(): Flowable<List<DataEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertData(data: List<DataEntity>) : Completable
+    fun insertData(data: List<DataEntity>): Completable
 
     @Query("SELECT * FROM user where isFavorite = 1")
     fun getFavoriteMovie(): Flowable<List<DataEntity>>

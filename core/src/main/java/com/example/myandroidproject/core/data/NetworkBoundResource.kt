@@ -59,12 +59,12 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                 when (response) {
                     is ApiResponse.Success -> {
                         saveCallResult(response.data)
-                        val dbSource = loadFromDB()
-                        dbSource.subscribeOn(Schedulers.computation())
+//                        loadFromDB()
+                        loadFromDB().subscribeOn(Schedulers.computation())
                             .observeOn(AndroidSchedulers.mainThread())
                             .take(1)
                             .subscribe {
-                                dbSource.unsubscribeOn(Schedulers.io())
+                                loadFromDB().unsubscribeOn(Schedulers.io())
                                 result.onNext(Resource.Success(it))
                             }
                     }

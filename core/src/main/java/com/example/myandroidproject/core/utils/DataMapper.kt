@@ -18,7 +18,7 @@ object DataMapper {
             val dataList = ArrayList<DataEntity>()
             input.map {
                 val data = DataEntity(
-                    id = it.id ?: 0,
+                    id = it.id!!,
                     adult = it.adult ?: false,
                     backdrop_path = it.backdrop_path.orEmpty(),
                     genre_ids = it.genre_ids ?: listOf(),
@@ -89,23 +89,24 @@ object DataMapper {
     object DetailMovieMapper {
         fun mapResponseToDomain(input: DetailMovieResponse?): DetailMovie {
             return DetailMovie(
-                adult = input?.adult,
-                backdrop_path = input?.backdrop_path,
-                budget = input?.budget,
+                adult = input?.adult ?: false,
+                backdrop_path = input?.backdrop_path.orEmpty(),
+                budget = input?.budget ?: 0,
                 genres = listOf(),
-                homepage = input?.homepage,
-                id = input?.id,
-                imdb_id = input?.imdb_id,
-                original_language = input?.original_language,
-                original_title = input?.original_title,
-                overview = input?.overview,
-                popularity = input?.popularity,
-                poster_path = input?.poster_path,
-                release_date = input?.release_date,
-                title = input?.original_title,
-                video = input?.video,
-                vote_average = input?.vote_average,
-                vote_count = input?.vote_count
+                homepage = input?.homepage.orEmpty(),
+                id = input?.id ?: 0,
+                imdb_id = input?.imdb_id.orEmpty(),
+                original_language = input?.original_language.orEmpty(),
+                original_title = input?.original_title.orEmpty(),
+                overview = input?.overview.orEmpty(),
+                popularity = input?.popularity ?: 0.0,
+                poster_path = input?.poster_path.orEmpty(),
+                release_date = input?.release_date.orEmpty(),
+                title = input?.original_title.orEmpty(),
+                video = input?.video ?: false,
+                vote_average = input?.vote_average ?: 0.0,
+                vote_count = input?.vote_count ?: 0,
+                isFavorite = false
             )
         }
     }

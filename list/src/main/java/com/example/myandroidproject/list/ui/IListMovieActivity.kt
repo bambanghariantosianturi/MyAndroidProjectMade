@@ -2,9 +2,9 @@ package com.example.myandroidproject.list.ui
 
 interface IListMovieActivity {
 
-    fun setUpExtrasData()
+    fun setUpExtrasData(): Boolean
 
     fun setUpView()
 
-    fun observeData(page: Int, genreMovieId: Int)
+    fun observeData()
 }

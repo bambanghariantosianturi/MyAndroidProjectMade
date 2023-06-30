@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), IMainActivity {
-
     private lateinit var binding: ActivityMainBinding
     private val mainViewModel: MainViewModel by viewModels()
     private val genreAdapter by lazy { GenreAdapter() }
@@ -31,8 +30,8 @@ class MainActivity : AppCompatActivity(), IMainActivity {
         setContentView(binding.root)
 
         supportActionBar?.hide()
-        setUpView()
         observeData()
+        setUpView()
     }
 
     override fun setUpView() {

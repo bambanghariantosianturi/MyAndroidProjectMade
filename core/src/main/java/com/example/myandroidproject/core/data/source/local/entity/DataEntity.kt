@@ -1,51 +1,55 @@
 package com.example.myandroidproject.core.data.source.local.entity
 
+import androidx.annotation.NonNull
 import androidx.room.*
+import javax.annotation.Nonnull
 
-@Entity(tableName = "user", primaryKeys = ["id"])
+@Entity(tableName = "user")
 data class DataEntity(
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "id")
     var id: Int,
 
-    @ColumnInfo("adult")
-    val adult: Boolean,
+    @ColumnInfo(name = "adult")
+    var adult: Boolean,
 
-    @ColumnInfo("backdrop_path")
-    val backdrop_path: String,
+    @ColumnInfo(name = "backdrop_path")
+    var backdrop_path: String,
 
-    @ColumnInfo("genre_ids")
-    val genre_ids: List<Int>? = null,
+    @ColumnInfo(name = "genre_ids")
+    var genre_ids: List<Int>? = null,
 
-    @ColumnInfo("original_language")
-    val original_language: String,
+    @ColumnInfo(name = "original_language")
+    var original_language: String,
 
-    @ColumnInfo("original_title")
-    val original_title: String,
+    @ColumnInfo(name = "original_title")
+    var original_title: String,
 
-    @ColumnInfo("overview")
-    val overview: String,
+    @ColumnInfo(name = "overview")
+    var overview: String,
 
-    @ColumnInfo("popularity")
-    val popularity: Double,
+    @ColumnInfo(name = "popularity")
+    var popularity: Double,
 
-    @ColumnInfo("poster_path")
-    val poster_path: String,
+    @ColumnInfo(name = "poster_path")
+    var poster_path: String,
 
-    @ColumnInfo("release_date")
-    val release_date: String,
+    @ColumnInfo(name = "release_date")
+    var release_date: String,
 
-    @ColumnInfo("title")
-    val title: String,
+    @ColumnInfo(name = "title")
+    var title: String,
 
-    @ColumnInfo("video")
-    val video: Boolean,
+    @ColumnInfo(name = "video")
+    var video: Boolean,
 
-    @ColumnInfo("vote_average")
-    val vote_average: Double,
+    @ColumnInfo(name = "vote_average")
+    var vote_average: Double,
 
-    @ColumnInfo("vote_count")
-    val vote_count: Int,
+    @ColumnInfo(name = "vote_count")
+    var vote_count: Int,
 
-    @ColumnInfo("isFavorite")
+    @ColumnInfo(name = "isFavorite")
     var isFavorite: Boolean = false
 )

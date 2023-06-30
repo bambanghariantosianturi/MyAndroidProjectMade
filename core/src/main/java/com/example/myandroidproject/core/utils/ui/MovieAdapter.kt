@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -21,7 +22,6 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ListViewHolder>() {
     @SuppressLint("NotifyDataSetChanged")
     fun setData(data: List<MovieItemModel>?) {
         if (data == null) return
-        listData.clear()
         listData.addAll(data)
         notifyDataSetChanged()
 //        notifyItemRangeInserted((listData.size - data.size), data.size)
@@ -59,11 +59,19 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.ListViewHolder>() {
                     .into(ivMovie)
                 tvTitleMovie.text = data.title
                 tvRating.bindRatingPrefix((data.vote_average).toString())
+
+                if (data.isFavorite) {
+                    binding.ivFavorite.setImageDrawable(ContextCompat.getDrawable(binding.root.context, com.example.myandroidproject.core.R.drawable.ic_favorite_black_24))
+                } else {
+                    binding.ivFavorite.setImageDrawable(ContextCompat.getDrawable(binding.root.context, com.example.myandroidproject.core.R.drawable.ic_favorite_border_24))
+                }
             }
         }
 
         init {
             binding.root.setOnClickListener {
+                val a = listData[adapterPosition]
+                print(a)
                 onItemClick?.invoke(listData[adapterPosition])
             }
         }

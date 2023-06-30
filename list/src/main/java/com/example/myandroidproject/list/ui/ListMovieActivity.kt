@@ -1,5 +1,6 @@
 package com.example.myandroidproject.list.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -26,11 +27,20 @@ class ListMovieActivity : AppCompatActivity(), IListMovieActivity {
 
     companion object {
         const val GENRE_MOVIE_ID = "GENRE_MOVIE_ID"
+
+        fun startActivity(activity: Activity, bundle: Bundle) {
+            activity.startActivity(Intent(activity, ListMovieActivity::class.java).apply {
+                putExtras(
+                    bundle
+                )
+            })
+        }
     }
 
     private lateinit var binding: ActivityListMovieBinding
     private val listViewModel: ListMovieViewModel by viewModels()
     private var genreMovieId: Int = 0
+    private var isFromDetail: Boolean = false
     private val movieAdapter by lazy { MovieAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,54 +49,65 @@ class ListMovieActivity : AppCompatActivity(), IListMovieActivity {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        setUpExtrasData()
+        val bundle = intent.extras
+        if (bundle != null) {
+            genreMovieId = bundle.getInt(GENRE_MOVIE_ID)
+            isFromDetail = bundle.getBoolean(CommonConstant.IS_FROM_DETAIL)
+        }
         setUpView()
     }
 
     override fun onResume() {
         super.onResume()
-        observeData(CommonConstant.PAGE_LIST_MOVIE, genreMovieId)
+        observeData()
     }
 
-    override fun observeData(page: Int, genreMovieId: Int) {
-        listViewModel.getMovieList(page, genreMovieId).observe(this, Observer {
-            if (it != null) {
-                when (it) {
-                    is Resource.Loading -> {
-                        binding.apply {
-                            pbListMovie.visible()
-                            rvListMovie.gone()
-                        }
-                    }
+    override fun observeData() {
+        listViewModel.getMovieList(CommonConstant.PAGE_LIST_MOVIE, genreMovieId)
+            .observe(this, Observer {
+                if (it != null) {
+                    when (it) {
+                        is Resource.Loading -> {
+                            with(binding) {
+                                pbListMovie.visible()
+                                pbLoadMore.gone()
+                                rvListMovie.gone()
 
-                    is Resource.Success -> {
-                        binding.apply {
-                            pbListMovie.gone()
-                            rvListMovie.visible()
-                            pbLoadMore.gone()
+                            }
                         }
-                        movieAdapter.setData(it.data)
-                        Toast.makeText(
-                            this,
-                            "Success get list movie data",
-                            Toast.LENGTH_LONG
-                        )
-                            .show()
-                    }
 
-                    is Resource.Error -> {
-                        Toast.makeText(this, "Error get list movie data", Toast.LENGTH_SHORT).show()
+                        is Resource.Success -> {
+                            with(binding) {
+                                pbListMovie.gone()
+                                rvListMovie.visible()
+                                pbLoadMore.gone()
+                            }
+                            movieAdapter.clear()
+                            movieAdapter.setData(it.data)
+                            Toast.makeText(
+                                this,
+                                "Success get list movie data",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                        }
+
+                        is Resource.Error -> {
+                            Toast.makeText(this, "Error get list movie data", Toast.LENGTH_SHORT)
+                                .show()
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
-    override fun setUpExtrasData() {
+    override fun setUpExtrasData(): Boolean {
         val bundle = intent.extras
         if (bundle != null) {
             this.genreMovieId = bundle.getInt(GENRE_MOVIE_ID)
         }
+
+        return bundle != null
     }
 
     override fun setUpView() {
@@ -95,7 +116,9 @@ class ListMovieActivity : AppCompatActivity(), IListMovieActivity {
                 getCrossModuleNavigator().classDetailActivity(),
                 bundleOf().apply {
                     putParcelable(CommonConstant.MOVIE_ID, selectData)
+                    putBoolean(CommonConstant.IS_FROM_LIST_MOVIE, true)
                 })
+            finish()
         }
 
         with(binding.rvListMovie) {
@@ -104,23 +127,9 @@ class ListMovieActivity : AppCompatActivity(), IListMovieActivity {
 
             this.setHasFixedSize(true)
             this.adapter = movieAdapter
-
-            this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        if (listViewModel.getPage() < listViewModel.getTotalPage()) {
-                            binding.pbLoadMore.visible()
-                            observeData(listViewModel.getPage() + 1, genreMovieId)
-                        }
-                    }
-                }
-            })
         }
 
         binding.ivFavorite.setOnClickListener {
-//            crossModuleNavigateTo(getCrossModuleNavigator().classFavoriteActivity())
-//            startActivity(Intent(this, Class.forName("com.example.myandroidproject.favorite.ui.FavoriteActivity")))
             val uri = Uri.parse("myandroidproject://favorite")
             startActivity(Intent(Intent.ACTION_VIEW, uri))
         }

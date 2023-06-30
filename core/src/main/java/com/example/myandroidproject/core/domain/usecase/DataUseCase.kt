@@ -7,7 +7,7 @@ import com.example.myandroidproject.core.domain.model.listmoviesmodel.MovieItemM
 import com.example.myandroidproject.core.domain.model.movietrailermodel.MovieTrailerItemModel
 import io.reactivex.Flowable
 
-public interface DataUseCase {
+interface DataUseCase {
 
     fun getMovieList(page: Int, genreId: Int): Flowable<Resource<List<MovieItemModel>>>
 

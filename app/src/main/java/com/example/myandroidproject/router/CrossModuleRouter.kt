@@ -6,6 +6,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.example.myandroidproject.detail.ui.DetailActivity
 import com.example.myandroidproject.kit.navigation.CrossModuleNavigator
+import com.example.myandroidproject.list.ui.ListMovieActivity
 import kotlin.reflect.KClass
 
 class CrossModuleRouter : CrossModuleNavigator {
@@ -31,6 +32,9 @@ class CrossModuleRouter : CrossModuleNavigator {
             DetailActivity::class -> {
                 DetailActivity.startActivity(activity, bundle ?: bundleOf())
             }
+            ListMovieActivity::class -> {
+                ListMovieActivity.startActivity(activity, bundle ?: bundleOf())
+            }
         }
     }
 
@@ -45,5 +49,9 @@ class CrossModuleRouter : CrossModuleNavigator {
 
     override fun classDetailActivity(): KClass<*> {
         return DetailActivity::class
+    }
+
+    override fun classListMovieActivity(): KClass<*> {
+        return ListMovieActivity::class
     }
 }

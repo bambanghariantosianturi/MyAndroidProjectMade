@@ -5,5 +5,7 @@ import com.example.myandroidproject.detail.databinding.ActivityDetailBinding
 
 interface IDetailActivity {
 
-    fun observeData(binding: ActivityDetailBinding?, movieId: MovieItemModel)
+    fun setUpView(movieItemModel: MovieItemModel)
+
+    fun setStatusFavorite(statusFavorite: Boolean)
 }

@@ -22,4 +22,6 @@ interface CrossModuleNavigator {
     )
 
     fun classDetailActivity(): KClass<*>
+
+    fun classListMovieActivity(): KClass<*>
 }

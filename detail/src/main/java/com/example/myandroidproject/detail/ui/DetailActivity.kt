@@ -5,22 +5,18 @@ import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
+import androidx.core.os.bundleOf
 import com.bumptech.glide.Glide
 import com.example.myandroidproject.core.commonconstant.CommonConstant
-import com.example.myandroidproject.core.data.Resource
 import com.example.myandroidproject.core.domain.model.listmoviesmodel.MovieItemModel
 import com.example.myandroidproject.detail.BuildConfig
-import com.example.myandroidproject.detail.R
 import com.example.myandroidproject.detail.databinding.ActivityDetailBinding
 import com.example.myandroidproject.detail.viewmodel.DetailViewModel
-import com.example.myandroidproject.kit.gone
-import com.example.myandroidproject.kit.visible
+import com.example.myandroidproject.kit.crossModuleNavigateTo
+import com.example.myandroidproject.kit.getCrossModuleNavigator
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,6 +34,8 @@ class DetailActivity : AppCompatActivity(), IDetailActivity {
 
     private lateinit var binding: ActivityDetailBinding
     private val detailViewModel: DetailViewModel by viewModels()
+    private var isFromListMovie: Boolean = false
+    private var movieIdExtras: MovieItemModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,19 +43,21 @@ class DetailActivity : AppCompatActivity(), IDetailActivity {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        val movieIdExtras = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(CommonConstant.MOVIE_ID, MovieItemModel::class.java)
-        } else {
-            intent.getParcelableExtra(CommonConstant.MOVIE_ID)
+        val bundle = intent.extras
+        if (bundle != null) {
+            isFromListMovie = bundle.getBoolean(CommonConstant.IS_FROM_LIST_MOVIE)
+            movieIdExtras = if (VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getParcelable(CommonConstant.MOVIE_ID, MovieItemModel::class.java)
+            } else {
+                bundle.getParcelable(CommonConstant.MOVIE_ID)
+            }
+
         }
 
-        if (movieIdExtras != null) {
-            observeData(binding, movieIdExtras)
-            setUpView(movieIdExtras)
-        }
+        movieIdExtras?.let { setUpView(it) }
     }
 
-    private fun setUpView(movieIdExtras: MovieItemModel) {
+    override fun setUpView(movieIdExtras: MovieItemModel) {
         Glide.with(binding.ivDetailMovie)
             .load(BuildConfig.IMG_URL + movieIdExtras.backdrop_path)
             .placeholder(com.example.myandroidproject.core.R.drawable.ic_movies_24)
@@ -75,31 +75,36 @@ class DetailActivity : AppCompatActivity(), IDetailActivity {
         }
     }
 
-    private fun setStatusFavorite(statusFavorite: Boolean) {
+    override fun setStatusFavorite(statusFavorite: Boolean) {
         if (statusFavorite) {
-            binding.ivFavorite.setImageDrawable(ContextCompat.getDrawable(this, com.example.myandroidproject.core.R.drawable.ic_favorite_black_24))
+            binding.ivFavorite.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    com.example.myandroidproject.core.R.drawable.ic_favorite_black_24
+                )
+            )
         } else {
-            binding.ivFavorite.setImageDrawable(ContextCompat.getDrawable(this, com.example.myandroidproject.core.R.drawable.ic_favorite_border_24))
+            binding.ivFavorite.setImageDrawable(
+                ContextCompat.getDrawable(
+                    this,
+                    com.example.myandroidproject.core.R.drawable.ic_favorite_border_24
+                )
+            )
         }
     }
 
-    override fun observeData(binding: ActivityDetailBinding?, movieId: MovieItemModel) {
-        detailViewModel.getMovieTrailer(movieId = movieId.id ?: 0).observe(this, Observer {
-            if (it.data != null) {
-                when (it) {
-                    is Resource.Loading -> {
 
-                    }
-                    is Resource.Success -> {
-                        Toast.makeText(this, "Success get movie trailer", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                    is Resource.Error -> {
-                        Toast.makeText(this, "Error get detail movie data", Toast.LENGTH_SHORT)
-                            .show()
-                    }
-                }
-            }
-        })
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        onBackPressedDispatcher.onBackPressed()
+        if (isFromListMovie) {
+            crossModuleNavigateTo(
+                getCrossModuleNavigator().classListMovieActivity(),
+                bundleOf().apply {
+                    putBoolean(CommonConstant.IS_FROM_DETAIL, true)
+                })
+        } else {
+            isTaskRoot
+        }
     }
 }

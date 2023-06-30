@@ -55,6 +55,7 @@ class FavoriteActivity : AppCompatActivity() {
             if (it.isNotEmpty()) {
                 binding.tvEmptyData.visibility = View.GONE
                 binding.rvListFavorite.visibility = View.VISIBLE
+                favoriteAdapter.clear()
                 favoriteAdapter.setData(it)
             } else {
                 binding.tvEmptyData.visibility = View.VISIBLE
